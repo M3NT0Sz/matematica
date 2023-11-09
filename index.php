@@ -19,7 +19,8 @@ if ($_POST['a']) {
             $recordetotal = $row['rec_recorde'];
         }
         if($resultadoagora > $recordetotal){
-            $alterrec = "UPDATE ";
+            $alterrec = "UPDATE recorde SET rec_recorde = '$resultadoagora' WHERE rec_cod = 1";
+            $comando = mysqli_query($conn, $alterrec);
         }
         $deleteperjf = "DELETE FROM pergunta_ja_feita";
         $comando = mysqli_query($conn, $deleteperjf);
@@ -36,6 +37,15 @@ if ($_POST['a']) {
         $_SESSION['TudoTudo'] = "Certo";
         header('location: index.php');
     } else {
+        $recordetotals = "SELECT * FROM recorde";
+        $recordetot = mysqli_query($conn, $recordetotals);
+        while ($row = mysqli_fetch_array($recordetot)) {
+            $recordetotal = $row['rec_recorde'];
+        }
+        if($resultadoagora > $recordetotal){
+            $alterrec = "UPDATE recorde SET rec_recorde = '$resultadoagora' WHERE rec_cod = 1";
+            $comando = mysqli_query($conn, $alterrec);
+        }
         $deleteperjf = "DELETE FROM pergunta_ja_feita";
         $comando = mysqli_query($conn, $deleteperjf);
         $_SESSION['TudoTudo'] = "Errado";
@@ -51,6 +61,15 @@ if ($_POST['a']) {
         $_SESSION['TudoTudo'] = "Certo";
         header('location: index.php');
     } else {
+        $recordetotals = "SELECT * FROM recorde";
+        $recordetot = mysqli_query($conn, $recordetotals);
+        while ($row = mysqli_fetch_array($recordetot)) {
+            $recordetotal = $row['rec_recorde'];
+        }
+        if($resultadoagora > $recordetotal){
+            $alterrec = "UPDATE recorde SET rec_recorde = '$resultadoagora' WHERE rec_cod = 1";
+            $comando = mysqli_query($conn, $alterrec);
+        }
         $deleteperjf = "DELETE FROM pergunta_ja_feita";
         $comando = mysqli_query($conn, $deleteperjf);
         $_SESSION['TudoTudo'] = "Errado";
@@ -66,6 +85,15 @@ if ($_POST['a']) {
         $_SESSION['TudoTudo'] = "Certo";
         header('location: index.php');
     } else {
+        $recordetotals = "SELECT * FROM recorde";
+        $recordetot = mysqli_query($conn, $recordetotals);
+        while ($row = mysqli_fetch_array($recordetot)) {
+            $recordetotal = $row['rec_recorde'];
+        }
+        if($resultadoagora > $recordetotal){
+            $alterrec = "UPDATE recorde SET rec_recorde = '$resultadoagora' WHERE rec_cod = 1";
+            $comando = mysqli_query($conn, $alterrec);
+        }
         $deleteperjf = "DELETE FROM pergunta_ja_feita";
         $comando = mysqli_query($conn, $deleteperjf);
         $_SESSION['TudoTudo'] = "Errado";
@@ -74,7 +102,7 @@ if ($_POST['a']) {
 }
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-br">
 
 <head>
     <meta charset="UTF-8">
@@ -100,7 +128,7 @@ if ($_POST['a']) {
             $simbolo = $row['per_simbolo'];
     ?>
             <form action="#" method="post">
-                Pergunta <?php echo $rec + 1 ?>
+                <h1>Pergunta <?php echo $resultadoagora + 1; ?></h1>
                 <h3><?php echo $num1; ?></h3>
                 <h3><?php echo $simbolo; ?></h3>
                 <h3><?php echo $num2; ?></h3>

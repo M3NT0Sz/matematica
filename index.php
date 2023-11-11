@@ -2,103 +2,43 @@
 error_reporting(0);
 session_start();
 include_once("conexao.php");
-$resultadoagora = 0;
-if ($_POST['a']) {
+if ($_POST['Voltar']) {
+    unset($_SESSION['TudoTudo']);
+    header('location: index.php');
+}
+if (isset($_POST['a']) || isset($_POST['b']) || isset($_POST['c']) || isset($_POST['d'])) {
     $resulta = $_POST['result'];
     $codperjf = $_POST['codperjf'];
-    if ($resulta == 'a') {
-        $resultadoagora = $resultadoagora + 1;
+
+    if (($resulta == 'a' && isset($_POST['a'])) || ($resulta == 'b' && isset($_POST['b'])) || ($resulta == 'c' && isset($_POST['c'])) || ($resulta == 'd' && isset($_POST['d']))) {
+        $_SESSION['resultadoagora'] = ($_SESSION['resultadoagora'] ?? 0) + 1;
         $perguntafeita = "INSERT INTO pergunta_ja_feita (perjf_perguntafeita) VALUES ('$codperjf')";
-        $comando = mysqli_query($conn, $perguntafeita);
+        mysqli_query($conn, $perguntafeita);
         $_SESSION['TudoTudo'] = "Certo";
-        header('location: index.php');
-    } else {
-        $recordetotals = "SELECT * FROM recorde";
-        $recordetot = mysqli_query($conn, $recordetotals);
-        while ($row = mysqli_fetch_array($recordetot)) {
-            $recordetotal = $row['rec_recorde'];
+        if ($_SESSION['resultadoagora'] == 25) {
+            $_SESSION['TudoTudo'] = "Ganhou";
+            header('location: index.php');
+            $recordetotal = mysqli_fetch_assoc(mysqli_query($conn, "SELECT rec_recorde FROM recorde"))['rec_recorde'] ?? 0;
+            if ($_SESSION['resultadoagora'] > $recordetotal) {
+                $alterrec = "UPDATE recorde SET rec_recorde = '{$_SESSION['resultadoagora']}' WHERE rec_cod = 1";
+                mysqli_query($conn, $alterrec);
+            }
+            $deleteperjf = "DELETE FROM pergunta_ja_feita";
+            mysqli_query($conn, $deleteperjf);
+            unset($_SESSION['resultadoagora']);
         }
-        if($resultadoagora > $recordetotal){
-            $alterrec = "UPDATE recorde SET rec_recorde = '$resultadoagora' WHERE rec_cod = 1";
-            $comando = mysqli_query($conn, $alterrec);
+    } else {
+        $recordetotal = mysqli_fetch_assoc(mysqli_query($conn, "SELECT rec_recorde FROM recorde"))['rec_recorde'] ?? 0;
+        if ($_SESSION['resultadoagora'] > $recordetotal) {
+            $alterrec = "UPDATE recorde SET rec_recorde = '{$_SESSION['resultadoagora']}' WHERE rec_cod = 1";
+            mysqli_query($conn, $alterrec);
         }
         $deleteperjf = "DELETE FROM pergunta_ja_feita";
-        $comando = mysqli_query($conn, $deleteperjf);
+        mysqli_query($conn, $deleteperjf);
         $_SESSION['TudoTudo'] = "Errado";
-        header('location: index.php');
+        unset($_SESSION['resultadoagora']);
     }
-} else if ($_POST['b']) {
-    $resulta = $_POST['result'];
-    $codperjf = $_POST['codperjf'];
-    if ($resulta == 'b') {
-        $resultadoagora = $resultadoagora + 1;
-        $perguntafeita = "INSERT INTO pergunta_ja_feita (perjf_perguntafeita) VALUES ('$codperjf')";
-        $comando = mysqli_query($conn, $perguntafeita);
-        $_SESSION['TudoTudo'] = "Certo";
-        header('location: index.php');
-    } else {
-        $recordetotals = "SELECT * FROM recorde";
-        $recordetot = mysqli_query($conn, $recordetotals);
-        while ($row = mysqli_fetch_array($recordetot)) {
-            $recordetotal = $row['rec_recorde'];
-        }
-        if($resultadoagora > $recordetotal){
-            $alterrec = "UPDATE recorde SET rec_recorde = '$resultadoagora' WHERE rec_cod = 1";
-            $comando = mysqli_query($conn, $alterrec);
-        }
-        $deleteperjf = "DELETE FROM pergunta_ja_feita";
-        $comando = mysqli_query($conn, $deleteperjf);
-        $_SESSION['TudoTudo'] = "Errado";
-        header('location: index.php');
-    }
-} else if ($_POST['c']) {
-    $resulta = $_POST['result'];
-    $codperjf = $_POST['codperjf'];
-    if ($resulta == 'c') {
-        $resultadoagora = $resultadoagora + 1;
-        $perguntafeita = "INSERT INTO pergunta_ja_feita (perjf_perguntafeita) VALUES ('$codperjf')";
-        $comando = mysqli_query($conn, $perguntafeita);
-        $_SESSION['TudoTudo'] = "Certo";
-        header('location: index.php');
-    } else {
-        $recordetotals = "SELECT * FROM recorde";
-        $recordetot = mysqli_query($conn, $recordetotals);
-        while ($row = mysqli_fetch_array($recordetot)) {
-            $recordetotal = $row['rec_recorde'];
-        }
-        if($resultadoagora > $recordetotal){
-            $alterrec = "UPDATE recorde SET rec_recorde = '$resultadoagora' WHERE rec_cod = 1";
-            $comando = mysqli_query($conn, $alterrec);
-        }
-        $deleteperjf = "DELETE FROM pergunta_ja_feita";
-        $comando = mysqli_query($conn, $deleteperjf);
-        $_SESSION['TudoTudo'] = "Errado";
-        header('location: index.php');
-    }
-} else if ($_POST['d']) {
-    $resulta = $_POST['result'];
-    $codperjf = $_POST['codperjf'];
-    if ($resulta == 'd') {
-        $resultadoagora = $resultadoagora + 1;
-        $perguntafeita = "INSERT INTO pergunta_ja_feita (perjf_perguntafeita) VALUES ('$codperjf')";
-        $comando = mysqli_query($conn, $perguntafeita);
-        $_SESSION['TudoTudo'] = "Certo";
-        header('location: index.php');
-    } else {
-        $recordetotals = "SELECT * FROM recorde";
-        $recordetot = mysqli_query($conn, $recordetotals);
-        while ($row = mysqli_fetch_array($recordetot)) {
-            $recordetotal = $row['rec_recorde'];
-        }
-        if($resultadoagora > $recordetotal){
-            $alterrec = "UPDATE recorde SET rec_recorde = '$resultadoagora' WHERE rec_cod = 1";
-            $comando = mysqli_query($conn, $alterrec);
-        }
-        $deleteperjf = "DELETE FROM pergunta_ja_feita";
-        $comando = mysqli_query($conn, $deleteperjf);
-        $_SESSION['TudoTudo'] = "Errado";
-        header('location: index.php');
-    }
+    header('location: index.php');
 }
 ?>
 <!DOCTYPE html>
@@ -127,57 +67,84 @@ if ($_POST['a']) {
             $result = $row['per_result'];
             $simbolo = $row['per_simbolo'];
     ?>
-            <form action="#" method="post">
-                <h1>Pergunta <?php echo $resultadoagora + 1; ?></h1>
-                <h3><?php echo $num1; ?></h3>
-                <h3><?php echo $simbolo; ?></h3>
-                <h3><?php echo $num2; ?></h3>
-                <input type="submit" value="<?php echo $value1 ?>" name="a">
-                <input type="submit" value="<?php echo $value2 ?>" name="b">
-                <input type="submit" value="<?php echo $value3 ?>" name="c">
-                <input type="submit" value="<?php echo $value4 ?>" name="d">
-                <input type="hidden" name="result" value="<?php echo $result; ?>">
-                <input type="hidden" name="codperjf" value="<?php echo $cod; ?>">
-            </form>
-        <?php
-        }
-    } else if ($_SESSION['TudoTudo'] == "Errado") {
-        unset($_SESSION['TudoTudo']);
-        ?>
-        <h1>JOGO DO MILHÃO</h1>
-        <form action="#" method="post">
-            <input type="submit" name="Comecar" value="Começar">
-        </form>
-
-        <?php
-        $rec = "SELECT * FROM recorde";
-        $recorde = mysqli_query($conn, $rec);
-        while ($row = mysqli_fetch_array($recorde)) {
-            $recor = $row['rec_recorde'];
-        ?>
-            <h3>Recorde: <?php echo $recor; ?></h3>
+            <div class="tudo">
+                <div class="pergunta">
+                    <form action="#" method="post">
+                        <h1>Pergunta <?php echo $_SESSION['resultadoagora'] + 1; ?></h1>
+                        <div class="conta">
+                            <h3><?php echo $num1; ?></h3>
+                            <h3><?php echo $simbolo; ?></h3>
+                            <h3><?php echo $num2; ?></h3>
+                        </div>
+                        <div class="botaoconta">
+                            <input type="submit" class="btnconta" value="<?php echo $value1 ?>" name="a">
+                            <input type="submit" class="btnconta" value="<?php echo $value2 ?>" name="b">
+                        </div>
+                        <div class="botaoconta">
+                            <input type="submit" class="btnconta" value="<?php echo $value3 ?>" name="c">
+                            <input type="submit" class="btnconta" value="<?php echo $value4 ?>" name="d">
+                        </div>
+                        <input type="hidden" name="result" value="<?php echo $result; ?>">
+                        <input type="hidden" name="codperjf" value="<?php echo $cod; ?>">
+                    </form>
+                </div>
+            </div>
         <?php
         }
         ?>
     <?php
+    } else if ($_SESSION['TudoTudo'] == "Errado") {
+        unset($_SESSION['TudoTudo']);
+    ?>
+        <div class="tudo">
+            <h1>JOGO DO MILHÃO</h1>
+            <form action="#" method="post">
+                <input type="submit" name="Comecar" value="Começar" class="btn-init">
+            </form>
+
+            <?php
+            $rec = "SELECT * FROM recorde";
+            $recorde = mysqli_query($conn, $rec);
+            while ($row = mysqli_fetch_array($recorde)) {
+                $recor = $row['rec_recorde'];
+            ?>
+                <h3>Recorde: <?php echo $recor; ?></h3>
+            <?php
+            }
+            ?>
+        </div>
+    <?php
+    } else if ($_SESSION['TudoTudo'] == "Ganhou") {
+    ?>
+        <div class="tudo">
+            <div class="pergunta">
+                <h1>Parabens</h1>
+                <form action="#" method="post">
+                    <input type="submit" class="btn-init" value="Voltar" name="Voltar">
+                </form>
+            </div>
+        </div>
+    <?php
     } else {
         unset($_SESSION['TudoTudo']);
     ?>
-        <h1>JOGO DO MILHÃO</h1>
-        <form action="#" method="post">
-            <input type="submit" name="Comecar" value="Começar">
-        </form>
+        <div class="tudo">
+            <h1>JOGO DO MILHÃO</h1>
+            <form action="#" method="post">
+                <input type="submit" name="Comecar" value="Começar" class="btn-init">
+            </form>
 
-        <?php
-        $rec = "SELECT * FROM recorde";
-        $recorde = mysqli_query($conn, $rec);
-        while ($row = mysqli_fetch_array($recorde)) {
-            $recor = $row['rec_recorde'];
-        ?>
-            <h3>Recorde: <?php echo $recor; ?></h3>
-        <?php
-        }
-        ?>
+            <?php
+            $rec = "SELECT * FROM recorde";
+            $recorde = mysqli_query($conn, $rec);
+            while ($row = mysqli_fetch_array($recorde)) {
+                $recor = $row['rec_recorde'];
+            ?>
+                <h3>Recorde: <?php echo $recor; ?></h3>
+            <?php
+            }
+            ?>
+        </div>
     <?php
     }
     ?>

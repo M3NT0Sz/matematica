@@ -8,12 +8,9 @@ if ($_POST['Voltar']) {
 }
 if (isset($_POST['a']) || isset($_POST['b']) || isset($_POST['c']) || isset($_POST['d'])) {
     $resulta = $_POST['result'];
-    $codperjf = $_POST['codperjf'];
 
     if (($resulta == 'a' && isset($_POST['a'])) || ($resulta == 'b' && isset($_POST['b'])) || ($resulta == 'c' && isset($_POST['c'])) || ($resulta == 'd' && isset($_POST['d']))) {
         $_SESSION['resultadoagora'] = ($_SESSION['resultadoagora'] ?? 0) + 1;
-        $perguntafeita = "INSERT INTO pergunta_ja_feita (perjf_perguntafeita) VALUES ('$codperjf')";
-        mysqli_query($conn, $perguntafeita);
         $_SESSION['TudoTudo'] = "Certo";
         if ($_SESSION['resultadoagora'] == 25) {
             $_SESSION['TudoTudo'] = "Ganhou";
@@ -23,8 +20,6 @@ if (isset($_POST['a']) || isset($_POST['b']) || isset($_POST['c']) || isset($_PO
                 $alterrec = "UPDATE recorde SET rec_recorde = '{$_SESSION['resultadoagora']}' WHERE rec_cod = 1";
                 mysqli_query($conn, $alterrec);
             }
-            $deleteperjf = "DELETE FROM pergunta_ja_feita";
-            mysqli_query($conn, $deleteperjf);
             unset($_SESSION['resultadoagora']);
         }
     } else {
@@ -33,8 +28,6 @@ if (isset($_POST['a']) || isset($_POST['b']) || isset($_POST['c']) || isset($_PO
             $alterrec = "UPDATE recorde SET rec_recorde = '{$_SESSION['resultadoagora']}' WHERE rec_cod = 1";
             mysqli_query($conn, $alterrec);
         }
-        $deleteperjf = "DELETE FROM pergunta_ja_feita";
-        mysqli_query($conn, $deleteperjf);
         $_SESSION['TudoTudo'] = "Errado";
         unset($_SESSION['resultadoagora']);
     }
@@ -54,44 +47,86 @@ if (isset($_POST['a']) || isset($_POST['b']) || isset($_POST['c']) || isset($_PO
 <body>
     <?php
     if ($_POST['Comecar'] || $_SESSION['TudoTudo'] == "Certo") {
-        $perguntas = "SELECT * FROM perguntas WHERE per_cod NOT IN (SELECT perjf_perguntafeita FROM pergunta_ja_feita) ORDER BY RAND() LIMIT 1";
-        $per = mysqli_query($conn, $perguntas);
-        while ($row = mysqli_fetch_array($per)) {
-            $cod = $row['per_cod'];
-            $num1 = $row['per_num1'];
-            $num2 = $row['per_num2'];
-            $value1 = $row['per_value1'];
-            $value2 = $row['per_value2'];
-            $value3 = $row['per_value3'];
-            $value4 = $row['per_value4'];
-            $result = $row['per_result'];
-            $simbolo = $row['per_simbolo'];
-    ?>
-            <div class="tudo">
-                <div class="pergunta">
-                    <form action="#" method="post">
-                        <h1>Pergunta <?php echo $_SESSION['resultadoagora'] + 1; ?></h1>
-                        <div class="conta">
-                            <h3><?php echo $num1; ?></h3>
-                            <h3><?php echo $simbolo; ?></h3>
-                            <h3><?php echo $num2; ?></h3>
-                        </div>
-                        <div class="botaoconta">
-                            <input type="submit" class="btnconta" value="<?php echo $value1 ?>" name="a">
-                            <input type="submit" class="btnconta" value="<?php echo $value2 ?>" name="b">
-                        </div>
-                        <div class="botaoconta">
-                            <input type="submit" class="btnconta" value="<?php echo $value3 ?>" name="c">
-                            <input type="submit" class="btnconta" value="<?php echo $value4 ?>" name="d">
-                        </div>
-                        <input type="hidden" name="result" value="<?php echo $result; ?>">
-                        <input type="hidden" name="codperjf" value="<?php echo $cod; ?>">
-                    </form>
-                </div>
-            </div>
-        <?php
+        $numero1 = rand(0, 100);
+        $numero2 = rand(0, 100);
+        $simb = array('+', '-', '/', '*');
+        shuffle($simb);
+        $simbolo = $simb[0];
+        if ($simbolo == '/') {
+            while ($numero2 == 0) {
+                $numero2 = rand(1, 50);
+            }
         }
-        ?>
+        switch ($simbolo) {
+            case '+':
+                $resultado = $numero1 + $numero2;
+                break;
+            case '-':
+                $resultado = $numero1 - $numero2;
+                break;
+            case '*':
+                $resultado = $numero1 * $numero2;
+                break;
+            case '/':
+                $resultado = $numero1 / $numero2;
+                break;
+        }
+        $resultado = round($resultado, 2);
+        echo $resultado;
+
+        $value = array(1, 2, 3, 4);
+        shuffle($value);
+        $valueresp = $value[0];
+        
+
+        if ($valueresp == 1) {
+            $result = 'a';
+            $value1 = $resultado;
+            $value2 = rand(0, $resultado - 10);
+            $value3 = rand(0, $resultado - 10);
+            $value4 = rand(0, $resultado - 10);
+        } else if ($valueresp == 2) {
+            $result = 'b';
+            $value1 = rand(0, $resultado - 10);
+            $value2 = $resultado;
+            $value3 = rand(0, $resultado - 10);
+            $value4 = rand(0, $resultado - 10);
+        } else if ($valueresp == 3) {
+            $result = 'c';
+            $value1 = rand(0, $resultado - 10);
+            $value2 = rand(0, $resultado - 10);
+            $value3 = $resultado;
+            $value4 = rand(0, $resultado - 10);
+        } else if ($valueresp == 4) {
+            $result = 'd';
+            $value1 = rand(0, $resultado - 10);
+            $value2 = rand(0, $resultado - 10);
+            $value3 = rand(0, $resultado - 10);
+            $value4 = $resultado;
+        }
+
+    ?>
+        <div class="tudo">
+            <div class="pergunta">
+                <form action="#" method="post">
+                    <h1>Pergunta <?php echo $_SESSION['resultadoagora'] + 1; ?></h1>
+                    <div class="conta">
+                        <h3><?php echo $numero1; ?></h3>
+                        <h3><?php echo $simbolo; ?></h3>
+                        <h3><?php echo $numero2; ?></h3>
+                    </div>
+                    <div class="botaoconta">
+                        <input type="submit" class="btnconta" value="<?php echo $value1 ?>" name="a">
+                        <input type="submit" class="btnconta" value="<?php echo $value2 ?>" name="b">
+                    </div>
+                    <div class="botaoconta">
+                        <input type="submit" class="btnconta" value="<?php echo $value3 ?>" name="c">
+                        <input type="submit" class="btnconta" value="<?php echo $value4 ?>" name="d">
+                    </div>
+                    <input type="hidden" name="result" value="<?php echo $result; ?>">
+                </form>
+            </div>
+        </div>
     <?php
     } else if ($_SESSION['TudoTudo'] == "Errado") {
         unset($_SESSION['TudoTudo']);

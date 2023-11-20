@@ -6,6 +6,11 @@ if ($_POST['Voltar']) {
     unset($_SESSION['TudoTudo']);
     header('location: index.php');
 }
+$recvida = "SELECT rec_vida FROM recorde";
+$recvidas = mysqli_query($conn, $recvida);
+while ($row = mysqli_fetch_array($recvidas)) {
+    $vida = $row['rec_vida'];
+}
 if (isset($_POST['a']) || isset($_POST['b']) || isset($_POST['c']) || isset($_POST['d'])) {
     $resulta = $_POST['result'];
 
@@ -23,13 +28,33 @@ if (isset($_POST['a']) || isset($_POST['b']) || isset($_POST['c']) || isset($_PO
             unset($_SESSION['resultadoagora']);
         }
     } else {
-        $recordetotal = mysqli_fetch_assoc(mysqli_query($conn, "SELECT rec_recorde FROM recorde"))['rec_recorde'] ?? 0;
-        if ($_SESSION['resultadoagora'] > $recordetotal) {
-            $alterrec = "UPDATE recorde SET rec_recorde = '{$_SESSION['resultadoagora']}' WHERE rec_cod = 1";
-            mysqli_query($conn, $alterrec);
+        if ($vida == 1) {
+            $recordetotal = mysqli_fetch_assoc(mysqli_query($conn, "SELECT rec_recorde FROM recorde"))['rec_recorde'] ?? 0;
+            if ($_SESSION['resultadoagora'] > $recordetotal) {
+                $alterrec = "UPDATE recorde SET rec_recorde = '{$_SESSION['resultadoagora']}' WHERE rec_cod = 1";
+                mysqli_query($conn, $alterrec);
+            }
+            $_SESSION['TudoTudo'] = "Errado";
+            unset($_SESSION['resultadoagora']);
+            $vidamais = "UPDATE recorde SET rec_vida = 3";
+            $recmais = mysqli_query($conn, $vidamais);
+        } else {
+            $vida = $vida - 1;
+            $_SESSION['resultadoagora'] = ($_SESSION['resultadoagora'] ?? 0) + 1;
+            $_SESSION['TudoTudo'] = "Certo";
+            $vidamenos = "UPDATE recorde SET rec_vida = $vida";
+            $recmenos = mysqli_query($conn, $vidamenos);
+            if ($_SESSION['resultadoagora'] == 25) {
+                $_SESSION['TudoTudo'] = "Ganhou";
+                header('location: index.php');
+                $recordetotal = mysqli_fetch_assoc(mysqli_query($conn, "SELECT rec_recorde FROM recorde"))['rec_recorde'] ?? 0;
+                if ($_SESSION['resultadoagora'] > $recordetotal) {
+                    $alterrec = "UPDATE recorde SET rec_recorde = '{$_SESSION['resultadoagora']}' WHERE rec_cod = 1";
+                    mysqli_query($conn, $alterrec);
+                }
+                unset($_SESSION['resultadoagora']);
+            }
         }
-        $_SESSION['TudoTudo'] = "Errado";
-        unset($_SESSION['resultadoagora']);
     }
     header('location: index.php');
 }
@@ -72,36 +97,35 @@ if (isset($_POST['a']) || isset($_POST['b']) || isset($_POST['c']) || isset($_PO
                 break;
         }
         $resultado = round($resultado, 2);
-        echo $resultado;
 
         $value = array(1, 2, 3, 4);
         shuffle($value);
         $valueresp = $value[0];
-        
+
 
         if ($valueresp == 1) {
             $result = 'a';
             $value1 = $resultado;
-            $value2 = rand(0, $resultado - 10);
-            $value3 = rand(0, $resultado - 10);
-            $value4 = rand(0, $resultado - 10);
+            $value2 = rand($resultado - 10, $resultado - 2);
+            $value3 = rand($resultado - 10, $resultado - 2);
+            $value4 = rand($resultado - 10, $resultado - 2);
         } else if ($valueresp == 2) {
             $result = 'b';
-            $value1 = rand(0, $resultado - 10);
+            $value1 = rand($resultado - 10, $resultado - 2);
             $value2 = $resultado;
-            $value3 = rand(0, $resultado - 10);
-            $value4 = rand(0, $resultado - 10);
+            $value3 = rand($resultado - 10, $resultado - 2);
+            $value4 = rand($resultado - 10, $resultado - 2);
         } else if ($valueresp == 3) {
             $result = 'c';
-            $value1 = rand(0, $resultado - 10);
-            $value2 = rand(0, $resultado - 10);
+            $value1 = rand($resultado - 10, $resultado - 2);
+            $value2 = rand($resultado - 10, $resultado - 2);
             $value3 = $resultado;
-            $value4 = rand(0, $resultado - 10);
+            $value4 = rand($resultado - 10, $resultado - 2);
         } else if ($valueresp == 4) {
             $result = 'd';
-            $value1 = rand(0, $resultado - 10);
-            $value2 = rand(0, $resultado - 10);
-            $value3 = rand(0, $resultado - 10);
+            $value1 = rand($resultado - 10, $resultado - 2);
+            $value2 = rand($resultado - 10, $resultado - 2);
+            $value3 = rand($resultado - 10, $resultado - 2);
             $value4 = $resultado;
         }
 
@@ -109,6 +133,38 @@ if (isset($_POST['a']) || isset($_POST['b']) || isset($_POST['c']) || isset($_PO
         <div class="tudo">
             <div class="pergunta">
                 <form action="#" method="post">
+                    <div class="coracoes">
+                        <?php
+                        if ($vida == 3) {
+                        ?>
+                            <h4>
+                                Vida:
+                                <img src="./Imagens/cheio.png">
+                                <img src="./Imagens/cheio.png">
+                                <img src="./Imagens/cheio.png">
+                            </h4>
+                        <?php
+                        } else if ($vida == 2) {
+                        ?>
+                            <h4>
+                                Vida:
+                                <img src="./Imagens/cheio.png">
+                                <img src="./Imagens/cheio.png">
+                                <img src="./Imagens/vazio.png">
+                            </h4>
+                        <?php
+                        } else if ($vida == 1) {
+                        ?>
+                            <h4>
+                                Vida:
+                                <img src="./Imagens/cheio.png">
+                                <img src="./Imagens/vazio.png">
+                                <img src="./Imagens/vazio.png">
+                            </h4>
+                        <?php
+                        }
+                        ?>
+                    </div>
                     <h1>Pergunta <?php echo $_SESSION['resultadoagora'] + 1; ?></h1>
                     <div class="conta">
                         <h3><?php echo $numero1; ?></h3>

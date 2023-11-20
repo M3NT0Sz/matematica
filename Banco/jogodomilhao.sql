@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Tempo de geração: 11/11/2023 às 02:48
+-- Tempo de geração: 20/11/2023 às 23:32
 -- Versão do servidor: 10.4.28-MariaDB
 -- Versão do PHP: 8.2.4
 
@@ -109,15 +109,16 @@ CREATE TABLE `pergunta_ja_feita` (
 
 CREATE TABLE `recorde` (
   `rec_cod` int(11) NOT NULL,
-  `rec_recorde` int(11) NOT NULL
+  `rec_recorde` int(11) NOT NULL,
+  `rec_vida` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 --
 -- Despejando dados para a tabela `recorde`
 --
 
-INSERT INTO `recorde` (`rec_cod`, `rec_recorde`) VALUES
-(1, 25);
+INSERT INTO `recorde` (`rec_cod`, `rec_recorde`, `rec_vida`) VALUES
+(1, 0, 3);
 
 --
 -- Índices para tabelas despejadas
@@ -155,7 +156,7 @@ ALTER TABLE `perguntas`
 -- AUTO_INCREMENT de tabela `pergunta_ja_feita`
 --
 ALTER TABLE `pergunta_ja_feita`
-  MODIFY `perjf_cod` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=302;
+  MODIFY `perjf_cod` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=318;
 
 --
 -- AUTO_INCREMENT de tabela `recorde`

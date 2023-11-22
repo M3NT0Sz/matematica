@@ -96,6 +96,10 @@ if (isset($_POST['a']) || isset($_POST['b']) || isset($_POST['c']) || isset($_PO
                 $resultado = $numero1 / $numero2;
                 break;
         }
+
+        if($simbolo[0] == "*"){
+            $simbolo[0] = "X";
+        }else{}
         $resultado = round($resultado, 2);
 
         $value = array(1, 2, 3, 4);
